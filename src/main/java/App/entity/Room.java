@@ -1,5 +1,6 @@
 package App.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
@@ -17,6 +18,7 @@ public class Room implements Serializable {
     @Id
     @Type(type="uuid-char")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private UUID id;
 
     @NotBlank(message = "Room number cannot be blank")

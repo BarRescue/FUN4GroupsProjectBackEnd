@@ -24,8 +24,10 @@ public class User implements Serializable, UserDetails {
     @Id
     @Type(type="uuid-char")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private UUID id;
 
+    @JsonIgnore
     @NotBlank(message = "Email cannot be blank")
     @Column(unique = true)
     private String email;
@@ -42,7 +44,7 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        return getPassword();
+        return this.password;
     }
 
     @Override
@@ -50,6 +52,7 @@ public class User implements Serializable, UserDetails {
         return getEmail();
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
