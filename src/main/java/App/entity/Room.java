@@ -18,7 +18,6 @@ public class Room implements Serializable {
     @Id
     @Type(type="uuid-char")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private UUID id;
 
     @NotBlank(message = "Room number cannot be blank")

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RoomService {
@@ -17,19 +18,23 @@ public class RoomService {
         this.roomRepository = roomRepository;
     }
 
-    public List<Room> getRooms() {
+    public List<Room> findAll() {
         return roomRepository.findAll();
     }
 
-    public Optional<Room> findRoomByRoomNumber(String roomNumber) {
-        return roomRepository.findRoomByRoomNumber(roomNumber);
+    public Optional<Room> findById(UUID id) {
+        return roomRepository.findById(id);
     }
 
-    public Room CreateOrUpdate(Room room) {
+    public Optional<Room> findRoomByRoomNumber(String roomNumber) {
+        return this.roomRepository.findRoomByRoomNumber(roomNumber);
+    }
+
+    public Room createOrUpdate(Room room) {
         return this.roomRepository.save(room);
     }
 
-    public void Delete(Room room) {
+    public void delete(Room room) {
         this.roomRepository.delete(room);
     }
 }
