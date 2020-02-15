@@ -1,8 +1,12 @@
 package App.service;
 
+import App.entity.Order;
 import App.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class OrderService {
@@ -11,5 +15,13 @@ public class OrderService {
     @Autowired
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    public Order createOrUpdate(Order order) {
+        return this.orderRepository.save(order);
+    }
+
+    public Optional<Order> findById(UUID orderId) {
+        return this.orderRepository.findById(orderId);
     }
 }

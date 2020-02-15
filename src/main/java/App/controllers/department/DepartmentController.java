@@ -2,6 +2,7 @@ package App.controllers.department;
 
 import App.controllers.enums.DepartmentResponse;
 import App.entity.Department;
+import App.models.department.DepartmentRegisterModel;
 import App.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class DepartmentController {
         return ok(departments);
     }
 
-    @GetMapping(value = "{number}")
+    @GetMapping(value = "{id}")
     public ResponseEntity getDepartment(@Valid @PathVariable String id) {
         Optional<Department> department = this.departmentService.findById(UUID.fromString(id));
 
@@ -48,20 +49,22 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity createDepartment(@Valid @RequestBody String departmentName) {
-        if(this.departmentService.findDepartmentByDepartmentName(departmentName).isPresent()) {
+    public ResponseEntity createDepartment(@Valid @RequestBody DepartmentRegisterModel departmentName) {
+        if(this.departmentService.findDepartmentByDepartmentName(departmentName.getDepartmentName()).isPresent()) {
             return new ResponseEntity<>(DepartmentResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
         }
 
         try {
-            Department department = new Department(departmentName);
-            return ok(this.departmentService.createOrUpdate(department));
+            Department department = new Department(departmentName.getDepartmentName());
+            this.departmentService.createOrUpdate(department);
+
+            return ok(department);
         } catch(Exception ex) {
             return new ResponseEntity<>(DepartmentResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping(value = "{number}")
+    @DeleteMapping(value = "{id}")
     public ResponseEntity deleteDepartment(@Valid @PathVariable String id) {
         Optional<Department> department = this.departmentService.findById(UUID.fromString(id));
 

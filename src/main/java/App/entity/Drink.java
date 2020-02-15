@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,14 +22,14 @@ public class Drink implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotBlank(message = "Name cannot be blank")
+    @NotNull
     private String name;
 
-    @Column(name = "has_sugar", columnDefinition = "BOOLEAN")
-    private Boolean hasSugar;
+    @Column(name="has_sugar", columnDefinition = "tinyint default false")
+    private Boolean hasSugar = false;
 
-    @Column(name = "has_milk", columnDefinition = "BOOLEAN")
-    private Boolean hasMilk;
+    @Column(name="has_milk", columnDefinition = "tinyint default false")
+    private Boolean hasMilk = false;
 
     @OneToMany(
             fetch = FetchType.EAGER,
@@ -38,13 +38,14 @@ public class Drink implements Serializable {
             orphanRemoval = true
     )
     @JsonBackReference
-    private Set<DrinkOrder> drinks = new HashSet<>();
+    @Getter
+    private Set<DrinkOrder> orders = new HashSet<>();
 
     public Drink() {}
 
     public Drink(String name, Boolean hasSugar, Boolean hasMilk) {
         this.name = name;
-        this.hasSugar = hasSugar;
         this.hasMilk = hasMilk;
+        this.hasSugar = hasSugar;
     }
 }

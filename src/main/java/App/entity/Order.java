@@ -1,5 +1,6 @@
 package App.entity;
 
+import App.entity.enums.Size;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,19 +23,19 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @ManyToOne
     @JoinColumn(name = "user_id")
-    @OneToOne(cascade = CascadeType.ALL)
-    @NotBlank(message = "User cannot be blank")
+    @NotNull
     private User user;
 
+    @ManyToOne
     @JoinColumn(name = "department_id")
-    @OneToOne(cascade = CascadeType.ALL)
-    @NotBlank(message = "Department cannot be blank")
+    @NotNull
     private Department department;
 
+    @ManyToOne
     @JoinColumn(name = "room_id")
-    @OneToOne(cascade = CascadeType.ALL)
-    @NotBlank(message = "Room cannot be blank")
+    @NotNull
     private Room room;
 
     @OneToMany(
@@ -43,7 +45,6 @@ public class Order implements Serializable {
             orphanRemoval = true
     )
     @JsonManagedReference
-    @Getter
     private Set<DrinkOrder> drinks = new HashSet<>();
 
     public Order() {}
@@ -52,5 +53,9 @@ public class Order implements Serializable {
         this.user = user;
         this.department = department;
         this.room = room;
+    }
+
+    public void addDrink(Drink drink, int sugar, int milk, int strength, Size size) {
+        this.drinks.add(new DrinkOrder(drink, this, sugar, milk, strength, size));
     }
 }

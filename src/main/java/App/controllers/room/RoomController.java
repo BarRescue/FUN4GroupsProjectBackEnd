@@ -37,7 +37,7 @@ public class RoomController {
         return ok(rooms);
     }
 
-    @GetMapping(value = "{number}")
+    @GetMapping(value = "{id}")
     public ResponseEntity getRoom(@Valid  @PathVariable String id) {
         Optional<Room> room = this.roomService.findById(UUID.fromString(id));
 
@@ -63,7 +63,7 @@ public class RoomController {
         }
     }
 
-    @DeleteMapping(value = "{number}")
+    @DeleteMapping(value = "{id}")
     public ResponseEntity deleteRoom(@Valid @PathVariable String id) {
         Optional<Room> room = this.roomService.findById(UUID.fromString(id));
 

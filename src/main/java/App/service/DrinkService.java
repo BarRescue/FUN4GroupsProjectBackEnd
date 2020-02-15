@@ -25,4 +25,16 @@ public class DrinkService {
     public Optional<Drink> findById(UUID id) {
         return this.drinkRepository.findById(id);
     }
+
+    public Optional<Drink> findByName(String name) {
+        return this.drinkRepository.findByName(name);
+    }
+
+    public Drink createOrUpdate(Drink drink) {
+        return this.drinkRepository.save(drink);
+    }
+
+    public void delete(Drink drink) {
+        this.drinkRepository.delete(drink);
+    }
 }

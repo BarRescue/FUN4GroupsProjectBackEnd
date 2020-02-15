@@ -31,7 +31,6 @@ public class DrinkOrder implements Serializable {
     @ManyToOne(
             fetch = FetchType.EAGER
     )
-    @JsonManagedReference
     private Drink drink;
 
     @ManyToOne(

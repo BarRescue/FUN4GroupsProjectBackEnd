@@ -19,7 +19,7 @@ public class Department implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotBlank(message = "Room name cannot be blank")
+    @NotBlank(message = "Department name cannot be blank")
     private String departmentName;
 
     public Department() {}
