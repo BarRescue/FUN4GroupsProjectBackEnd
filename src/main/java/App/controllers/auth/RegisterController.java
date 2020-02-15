@@ -38,7 +38,7 @@ public class RegisterController {
     @PostMapping("/register")
     public ResponseEntity login(@Valid @RequestBody RegisterModel registerModel) {
         if(userService.findByEmail(registerModel.getEmail()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AuthResponse.USER_ALREADY_EXISTS.toString());
+            return new ResponseEntity<>(AuthResponse.USER_ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -56,7 +56,7 @@ public class RegisterController {
             model.put("user", createdUser);
             return ok(model);
         } catch(Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AuthResponse.UNEXPECTED_ERROR.toString());
+            return new ResponseEntity<>(AuthResponse.UNEXPECTED_ERROR.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 }

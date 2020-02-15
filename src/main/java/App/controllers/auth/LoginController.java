@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -37,21 +38,24 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody AuthorisationModel authModel) throws ResponseStatusException {
-        User user = userService.findByEmail(authModel.getEmail())
-                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AuthResponse.WRONG_CREDENTIALS.toString()); });
+    public ResponseEntity login(@Valid @RequestBody AuthorisationModel authModel) {
+        Optional<User> user = userService.findByEmail(authModel.getEmail());
 
-        if(!passwordHelper.isMatch(authModel.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AuthResponse.WRONG_CREDENTIALS.toString());
+        if(!user.isPresent()) {
+            return new ResponseEntity<>(AuthResponse.WRONG_CREDENTIALS.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+        if(!passwordHelper.isMatch(authModel.getPassword(), user.get().getPassword())) {
+            return new ResponseEntity<>(AuthResponse.WRONG_CREDENTIALS.toString(), HttpStatus.BAD_REQUEST);
         }
 
         try {
             Map<Object, Object> model = new LinkedHashMap<>();
-            model.put("token", tokenProvider.createToken(user.getId(), user.getFirstName(), user.getLastName()));
-            model.put("user", user);
+            model.put("token", tokenProvider.createToken(user.get().getId(), user.get().getFirstName(), user.get().getLastName()));
+            model.put("user", user.get());
             return ok(model);
-        } catch(AuthenticationException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AuthResponse.UNEXPECTED_ERROR.toString());
+        } catch(AuthenticationException ex) {
+            return new ResponseEntity<>(AuthResponse.UNEXPECTED_ERROR.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 }
