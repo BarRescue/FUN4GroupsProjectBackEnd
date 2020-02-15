@@ -37,7 +37,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody AuthorisationModel authModel) {
+    public ResponseEntity login(@Valid @RequestBody AuthorisationModel authModel) throws ResponseStatusException {
         User user = userService.findByEmail(authModel.getEmail())
                 .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AuthResponse.WRONG_CREDENTIALS.toString()); });
 
