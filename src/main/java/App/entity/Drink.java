@@ -25,10 +25,10 @@ public class Drink implements Serializable {
     @NotNull
     private String name;
 
-    @Column(name="has_sugar", columnDefinition = "tinyint default false")
+    @Column(name="has_sugar", columnDefinition = "boolean default false")
     private Boolean hasSugar = false;
 
-    @Column(name="has_milk", columnDefinition = "tinyint default false")
+    @Column(name="has_milk", columnDefinition = "boolean default false")
     private Boolean hasMilk = false;
 
     @OneToMany(
