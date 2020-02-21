@@ -1,17 +1,20 @@
 package App.entity;
 
+import App.entity.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 
 @Entity
@@ -42,6 +45,10 @@ public class User implements Serializable, UserDetails {
     @NotBlank(message = "Last Name cannot be blank")
     private String lastName;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
     @Override
     public String getPassword() {
         return this.password;
@@ -55,7 +62,7 @@ public class User implements Serializable, UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.toString()));
     }
 
     @JsonIgnore

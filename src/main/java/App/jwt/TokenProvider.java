@@ -1,6 +1,7 @@
 package App.jwt;
 
 import App.entity.User;
+import App.entity.enums.Role;
 import App.repository.UserRepository;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,10 @@ public class TokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(UUID username, String firstName, String lastName) {
+    public String createToken(UUID username, String firstName, String lastName, Role role) {
         Claims claims = Jwts.claims().setSubject(username.toString());
         claims.put("username", firstName + " " + lastName);
+        claims.put("role", role);
 
         Date now = new Date();
 

@@ -51,7 +51,7 @@ public class LoginController {
 
         try {
             Map<Object, Object> model = new LinkedHashMap<>();
-            model.put("token", tokenProvider.createToken(user.get().getId(), user.get().getFirstName(), user.get().getLastName()));
+            model.put("token", tokenProvider.createToken(user.get().getId(), user.get().getFirstName(), user.get().getLastName(), user.get().getRole()));
             model.put("user", user.get());
             return ok(model);
         } catch(AuthenticationException ex) {

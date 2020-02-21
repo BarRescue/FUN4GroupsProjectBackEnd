@@ -52,7 +52,7 @@ public class RegisterController {
             User createdUser = userService.createOrUpdate(user);
 
             Map<Object, Object> model = new LinkedHashMap<>();
-            model.put("token", tokenProvider.createToken(createdUser.getId(), createdUser.getFirstName(), createdUser.getLastName()));
+            model.put("token", tokenProvider.createToken(createdUser.getId(), createdUser.getFirstName(), createdUser.getLastName(), createdUser.getRole()));
             model.put("user", createdUser);
             return ok(model);
         } catch(Exception ex) {
