@@ -58,7 +58,7 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping("/user")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
         Map<Object, Object> model = new LinkedHashMap<>();
         model.put("user", userDetails);
