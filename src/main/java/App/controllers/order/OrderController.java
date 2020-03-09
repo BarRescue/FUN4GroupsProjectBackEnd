@@ -16,12 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -33,6 +34,28 @@ public class OrderController {
     @Autowired
     public OrderController(OrderLogic orderLogic) {
         this.orderLogic = orderLogic;
+    }
+
+    @GetMapping
+    public ResponseEntity getOrders() {
+        List<Order> orders = this.orderLogic.findAll();
+
+        if(orders.isEmpty()) {
+            return new ResponseEntity<>(OrderResponse.NO_ORDERS.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+        return ok(orders);
+    }
+
+    @GetMapping(value = "{id}")
+    public ResponseEntity getOrder(@Valid @PathVariable String id) {
+        Optional<Order> order = this.orderLogic.findById(UUID.fromString(id));
+
+        if(!order.isPresent()) {
+            return new ResponseEntity<>(OrderResponse.NO_ORDER.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+        return ok(order);
     }
 
     @PostMapping

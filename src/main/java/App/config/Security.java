@@ -37,7 +37,6 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/images/**").permitAll()
-                .antMatchers("/room/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new TokenConfigurer(tokenProvider));

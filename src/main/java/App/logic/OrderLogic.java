@@ -30,6 +30,14 @@ public class OrderLogic {
         this.takeOrderService = takeOrderService;
     }
 
+    public List<Order> findAll() {
+        return this.orderService.findAll();
+    }
+
+    public Optional<Order> findById(UUID id) {
+        return this.orderService.findById(id);
+    }
+
     public Order createOrder(User user, String roomId, String departmentId, List<DrinkDTO> drinks) {
         Room room = this.getRoom(roomId);
         Department department = this.getDepartment(departmentId);

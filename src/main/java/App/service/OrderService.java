@@ -5,6 +5,7 @@ import App.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,5 +24,9 @@ public class OrderService {
 
     public Optional<Order> findById(UUID orderId) {
         return this.orderRepository.findById(orderId);
+    }
+
+    public List<Order> findAll() {
+        return this.orderRepository.findAll();
     }
 }
