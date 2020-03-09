@@ -1,5 +1,6 @@
 package App.controllers.room;
 
+import App.controllers.enums.AuthResponse;
 import App.controllers.enums.RoomResponse;
 import App.entity.Room;
 import App.models.room.RoomRegisterModel;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -49,33 +51,41 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity createRoom(@Valid @RequestBody RoomRegisterModel roomModel) {
-        if(roomService.findRoomByRoomNumber(roomModel.getRoomNumber()).isPresent()) {
-            return new ResponseEntity<>(RoomResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity createRoom(@Valid @RequestBody RoomRegisterModel roomModel, HttpServletRequest request) {
+        if(request.isUserInRole("ADMIN")) {
+            if (roomService.findRoomByRoomNumber(roomModel.getRoomNumber()).isPresent()) {
+                return new ResponseEntity<>(RoomResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
+            }
+
+            try {
+                Room room = new Room(roomModel.getRoomNumber(), roomModel.getRoomName());
+                return ok(this.roomService.createOrUpdate(room));
+
+            } catch (Exception ex) {
+                return new ResponseEntity<>(RoomResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
+            }
         }
 
-        try {
-            Room room = new Room(roomModel.getRoomNumber(), roomModel.getRoomName());
-            return ok(this.roomService.createOrUpdate(room));
-
-        } catch(Exception ex) {
-            return new ResponseEntity<>(RoomResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(AuthResponse.NO_PREMISSIONS.toString(), HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity deleteRoom(@Valid @PathVariable String id) {
-        Optional<Room> room = this.roomService.findById(UUID.fromString(id));
+    public ResponseEntity deleteRoom(@Valid @PathVariable String id, HttpServletRequest request) {
+        if (request.isUserInRole("ADMIN")) {
+            Optional<Room> room = this.roomService.findById(UUID.fromString(id));
 
-        if(room.isPresent()) {
-            try {
-                this.roomService.delete(room.get());
-                return new ResponseEntity<>(RoomResponse.SUCCESSFULLY_DELETED.toString(), HttpStatus.OK);
-            } catch(Exception ex) {
-                return new ResponseEntity<>(RoomResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
+            if (room.isPresent()) {
+                try {
+                    this.roomService.delete(room.get());
+                    return new ResponseEntity<>(RoomResponse.SUCCESSFULLY_DELETED.toString(), HttpStatus.OK);
+                } catch (Exception ex) {
+                    return new ResponseEntity<>(RoomResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<>(RoomResponse.NO_ROOM.toString(), HttpStatus.BAD_REQUEST);
             }
-        } else {
-            return new ResponseEntity<>(RoomResponse.NO_ROOM.toString(), HttpStatus.BAD_REQUEST);
         }
+
+        return new ResponseEntity<>(AuthResponse.NO_PREMISSIONS.toString(), HttpStatus.BAD_REQUEST);
     }
 }

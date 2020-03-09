@@ -1,5 +1,6 @@
 package App.controllers.drink;
 
+import App.controllers.enums.AuthResponse;
 import App.controllers.enums.DrinkResponse;
 import App.controllers.enums.RoomResponse;
 import App.entity.Drink;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -52,32 +54,40 @@ public class DrinkController {
     }
 
     @PostMapping
-    public ResponseEntity createDrink(@Valid @RequestBody DrinkRegisterModel drinkRegisterModel) {
-        if(drinkService.findByName(drinkRegisterModel.getDrinkName()).isPresent()) {
-            return new ResponseEntity<>(DrinkResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity createDrink(@Valid @RequestBody DrinkRegisterModel drinkRegisterModel, HttpServletRequest request) {
+        if (request.isUserInRole("ADMIN")) {
+            if (drinkService.findByName(drinkRegisterModel.getDrinkName()).isPresent()) {
+                return new ResponseEntity<>(DrinkResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
+            }
+
+            try {
+                Drink drink = new Drink(drinkRegisterModel.getDrinkName(), drinkRegisterModel.getHasSugar(), drinkRegisterModel.getHasMilk());
+                return ok(this.drinkService.createOrUpdate(drink));
+            } catch (Exception ex) {
+                return new ResponseEntity<>(DrinkResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
+            }
         }
 
-        try {
-            Drink drink = new Drink(drinkRegisterModel.getDrinkName(), drinkRegisterModel.getHasSugar(), drinkRegisterModel.getHasMilk());
-            return ok(this.drinkService.createOrUpdate(drink));
-        } catch(Exception ex) {
-            return new ResponseEntity<>(DrinkResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(AuthResponse.NO_PREMISSIONS.toString(), HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity deleteDrink(@Valid @PathVariable String id) {
-        Optional<Drink> drink = this.drinkService.findById(UUID.fromString(id));
+    public ResponseEntity deleteDrink(@Valid @PathVariable String id, HttpServletRequest request) {
+        if(request.isUserInRole("ADMIN")) {
+            Optional<Drink> drink = this.drinkService.findById(UUID.fromString(id));
 
-        if(drink.isPresent()) {
-            try {
-                this.drinkService.delete(drink.get());
-                return new ResponseEntity<>(DrinkResponse.SUCCESSFULLY_DELETED.toString(), HttpStatus.OK);
-            } catch(Exception ex) {
-                return new ResponseEntity<>(DrinkResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
+            if (drink.isPresent()) {
+                try {
+                    this.drinkService.delete(drink.get());
+                    return new ResponseEntity<>(DrinkResponse.SUCCESSFULLY_DELETED.toString(), HttpStatus.OK);
+                } catch (Exception ex) {
+                    return new ResponseEntity<>(DrinkResponse.ERROR.toString(), HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<>(DrinkResponse.NO_DRINK.toString(), HttpStatus.BAD_REQUEST);
             }
-        } else {
-            return new ResponseEntity<>(DrinkResponse.NO_DRINK.toString(), HttpStatus.BAD_REQUEST);
         }
+
+        return new ResponseEntity<>(AuthResponse.NO_PREMISSIONS.toString(), HttpStatus.BAD_REQUEST);
     }
 }
