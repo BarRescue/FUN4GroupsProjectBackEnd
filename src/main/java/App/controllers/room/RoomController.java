@@ -3,11 +3,13 @@ package App.controllers.room;
 import App.controllers.enums.AuthResponse;
 import App.controllers.enums.RoomResponse;
 import App.entity.Room;
+import App.entity.User;
 import App.models.room.RoomRegisterModel;
 import App.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +42,7 @@ public class RoomController {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity getRoom(@Valid  @PathVariable String id) {
+    public ResponseEntity getRoom(@Valid @PathVariable String id) {
         Optional<Room> room = this.roomService.findById(UUID.fromString(id));
 
         if(!room.isPresent()) {
@@ -51,8 +53,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity createRoom(@Valid @RequestBody RoomRegisterModel roomModel, HttpServletRequest request) {
-        if(request.isUserInRole("ADMIN")) {
+    public ResponseEntity createRoom(@AuthenticationPrincipal User user, @Valid @RequestBody RoomRegisterModel roomModel, HttpServletRequest request) {
+        if (user.getRole().toString().equals("ADMIN")) {
             if (roomService.findRoomByRoomNumber(roomModel.getRoomNumber()).isPresent()) {
                 return new ResponseEntity<>(RoomResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
             }
@@ -70,8 +72,8 @@ public class RoomController {
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity deleteRoom(@Valid @PathVariable String id, HttpServletRequest request) {
-        if (request.isUserInRole("ADMIN")) {
+    public ResponseEntity deleteRoom(@AuthenticationPrincipal User user, @Valid @PathVariable String id, HttpServletRequest request) {
+        if (user.getRole().toString().equals("ADMIN")) {
             Optional<Room> room = this.roomService.findById(UUID.fromString(id));
 
             if (room.isPresent()) {

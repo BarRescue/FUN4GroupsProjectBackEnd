@@ -3,11 +3,13 @@ package App.controllers.department;
 import App.controllers.enums.AuthResponse;
 import App.controllers.enums.DepartmentResponse;
 import App.entity.Department;
+import App.entity.User;
 import App.models.department.DepartmentRegisterModel;
 import App.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,8 +53,8 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity createDepartment(@Valid @RequestBody DepartmentRegisterModel departmentName, HttpServletRequest request) {
-        if(request.isUserInRole("ADMIN")) {
+    public ResponseEntity createDepartment(@AuthenticationPrincipal User user, @Valid @RequestBody DepartmentRegisterModel departmentName, HttpServletRequest request) {
+        if (user.getRole().toString().equals("ADMIN")) {
             if (this.departmentService.findDepartmentByDepartmentName(departmentName.getDepartmentName()).isPresent()) {
                 return new ResponseEntity<>(DepartmentResponse.ALREADY_EXISTS.toString(), HttpStatus.BAD_REQUEST);
             }
@@ -71,8 +73,8 @@ public class DepartmentController {
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity deleteDepartment(@Valid @PathVariable String id, HttpServletRequest request) {
-        if(request.isUserInRole("ADMIN")) {
+    public ResponseEntity deleteDepartment(@AuthenticationPrincipal User user, @Valid @PathVariable String id, HttpServletRequest request) {
+        if (user.getRole().toString().equals("ADMIN")) {
             Optional<Department> department = this.departmentService.findById(UUID.fromString(id));
 
             if (department.isPresent()) {
