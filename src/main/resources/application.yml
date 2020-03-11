@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-54-246-89-234.eu-west-1.compute.amazonaws.com:5432/d9h8tjesis83ar
-    username: oaegyuqlzbpafr
-    password: 19479e9340c487401d3fc89ac8b734c794d60d08072e7d5e8b46c29d49ea58aa
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://localhost/fungroup?serverTimezone=UTC
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update

@@ -38,6 +38,9 @@ public class Order implements Serializable {
     @NotNull
     private Room room;
 
+    @Column(name="order_done", columnDefinition = "boolean default false")
+    private Boolean orderDone = false;
+
     @OneToMany(
             fetch = FetchType.EAGER,
             mappedBy = "order",

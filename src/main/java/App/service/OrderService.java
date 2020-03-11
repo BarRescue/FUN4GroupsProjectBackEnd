@@ -29,4 +29,8 @@ public class OrderService {
     public List<Order> findAll() {
         return this.orderRepository.findAll();
     }
+
+    public List<Order> findAllByOrderDone(Boolean done) {
+        return this.orderRepository.findAllByOrderDone(done);
+    }
 }

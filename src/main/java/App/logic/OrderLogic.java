@@ -30,8 +30,8 @@ public class OrderLogic {
         this.takeOrderService = takeOrderService;
     }
 
-    public List<Order> findAll() {
-        return this.orderService.findAll();
+    public List<Order> findAll(Boolean done) {
+        return this.orderService.findAllByOrderDone(done);
     }
 
     public Optional<Order> findById(UUID id) {
@@ -72,6 +72,9 @@ public class OrderLogic {
                 this.takeOrderService.createOrUpdate(orderDone);
 
                 ordersDone.add(orderDone);
+
+                o.get().setOrderDone(true);
+                this.orderService.createOrUpdate(o.get());
             }
         }
 
