@@ -38,7 +38,7 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity getOrders() {
-        List<Order> orders = this.orderLogic.findAll(true);
+        List<Order> orders = this.orderLogic.findAll(false);
 
         if(orders.isEmpty()) {
             return new ResponseEntity<>(OrderResponse.NO_ORDERS.toString(), HttpStatus.BAD_REQUEST);
