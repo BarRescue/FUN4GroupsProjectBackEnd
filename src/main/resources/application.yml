@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost/fungroup?serverTimezone=UTC
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ec2-79-125-26-232.eu-west-1.compute.amazonaws.com
+    username: d1ssufbjh9j8ps
+    password: kunjqrrsnixtrk
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
