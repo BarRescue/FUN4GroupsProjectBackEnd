@@ -26,9 +26,7 @@ public class DrinkService {
         return this.drinkRepository.findById(id);
     }
 
-    public Optional<Drink> findByName(String name) {
-        return this.drinkRepository.findByName(name);
-    }
+    public Optional<Drink> findByName(String name) { return this.drinkRepository.findByName(name);   }
 
     public Drink createOrUpdate(Drink drink) {
         return this.drinkRepository.save(drink);
